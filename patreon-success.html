@@ -3,39 +3,290 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Patreon Connection</title>
+  <title>ETS2 Tachograph App - Patreon Connection</title>
   <style>
-    html, body { height: 100%; margin: 0; }
+    :root {
+      --bg: #0f0f10;
+      --panel: #17181b;
+      --panel-2: #1d1f23;
+      --border: #31343a;
+      --text: #f2f4f7;
+      --muted: #a7adb7;
+      --success: #4caf50;
+      --error: #ff6b6b;
+      --accent: #ff8f2b;
+      --accent-2: #ffb347;
+      --shadow: 0 18px 42px rgba(0, 0, 0, 0.45);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      height: 100%;
+      margin: 0;
+    }
+
     body {
-      background: #111;
-      color: #fff;
-      font-family: Arial, sans-serif;
+      background:
+        radial-gradient(circle at top, rgba(255,143,43,0.08), transparent 35%),
+        linear-gradient(180deg, #0d0e10 0%, #111316 100%);
+      color: var(--text);
+      font-family: Arial, Helvetica, sans-serif;
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 20px;
+      padding: 24px;
     }
-    .card {
-      background: #1b1b1b;
-      border: 1px solid #333;
+
+    .shell {
+      width: min(560px, calc(100vw - 32px));
+      background: linear-gradient(180deg, var(--panel) 0%, var(--panel-2) 100%);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--border);
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0));
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+    }
+
+    .brand-icon {
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      border: 1px solid rgba(255, 143, 43, 0.35);
+      background:
+        linear-gradient(180deg, rgba(255,143,43,0.18), rgba(255,143,43,0.05)),
+        #1b1d21;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--accent-2);
+      font-size: 18px;
+      flex: 0 0 auto;
+    }
+
+    .brand-text {
+      min-width: 0;
+    }
+
+    .brand-title {
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: 0.2px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .brand-sub {
+      margin-top: 2px;
+      font-size: 12px;
+      color: var(--muted);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .status-badge {
+      padding: 7px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      border: 1px solid rgba(76, 175, 80, 0.28);
+      color: #d8f5da;
+      background: rgba(76, 175, 80, 0.12);
+      flex: 0 0 auto;
+    }
+
+    .status-badge.error {
+      border-color: rgba(255, 107, 107, 0.28);
+      color: #ffd8d8;
+      background: rgba(255, 107, 107, 0.12);
+    }
+
+    .content {
+      padding: 28px 24px 22px;
+    }
+
+    .hero {
+      display: flex;
+      align-items: flex-start;
+      gap: 18px;
+    }
+
+    .hero-icon {
+      width: 62px;
+      height: 62px;
+      border-radius: 16px;
+      border: 1px solid rgba(76, 175, 80, 0.2);
+      background:
+        radial-gradient(circle at 30% 30%, rgba(76,175,80,0.18), transparent 55%),
+        linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0)),
+        #1a1c20;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 30px;
+      flex: 0 0 auto;
+    }
+
+    .hero-icon.error {
+      border-color: rgba(255, 107, 107, 0.2);
+      background:
+        radial-gradient(circle at 30% 30%, rgba(255,107,107,0.18), transparent 55%),
+        linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0)),
+        #1a1c20;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 25px;
+      line-height: 1.2;
+      letter-spacing: 0.2px;
+    }
+
+    .subtitle {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.55;
+    }
+
+    .info-grid {
+      margin-top: 22px;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .info-card {
+      background: rgba(255,255,255,0.025);
+      border: 1px solid rgba(255,255,255,0.05);
       border-radius: 14px;
-      padding: 24px 28px;
-      max-width: 560px;
-      width: calc(100vw - 32px);
-      box-shadow: 0 10px 30px rgba(0,0,0,.35);
+      padding: 14px 14px 12px;
+    }
+
+    .info-label {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.7px;
+    }
+
+    .info-value {
+      margin-top: 7px;
+      font-size: 14px;
+      color: var(--text);
+      line-height: 1.45;
+      word-break: break-word;
+    }
+
+    .footer-note {
+      margin-top: 18px;
+      padding-top: 16px;
+      border-top: 1px solid rgba(255,255,255,0.06);
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.5;
       text-align: center;
     }
-    h2 { margin: 0 0 12px; color: #4CAF50; }
-    p { margin: 8px 0; opacity: .92; line-height: 1.45; }
-    .muted { opacity: .7; font-size: 13px; }
-    .error { color: #ff6b6b; }
+
+    .footer-note strong {
+      color: var(--text);
+    }
+
+    @media (max-width: 560px) {
+      .topbar {
+        align-items: flex-start;
+        gap: 10px;
+        flex-direction: column;
+      }
+
+      .status-badge {
+        align-self: flex-start;
+      }
+
+      .hero {
+        flex-direction: column;
+      }
+
+      .info-grid {
+        grid-template-columns: 1fr;
+      }
+
+      h1 {
+        font-size: 22px;
+      }
+    }
   </style>
 </head>
 <body>
-  <div class="card">
-    <h2 id="title">Connection successful ✅</h2>
-    <p id="desc">You can return to the app. This window will close automatically.</p>
-    <p class="muted">If it doesn't close, you can close it manually.</p>
+  <div class="shell">
+    <div class="topbar">
+      <div class="brand">
+        <div class="brand-icon">⏺</div>
+        <div class="brand-text">
+          <div class="brand-title">ETS2 Tachograph App</div>
+          <div class="brand-sub">Patreon account verification</div>
+        </div>
+      </div>
+      <div id="badge" class="status-badge">CONNECTED</div>
+    </div>
+
+    <div class="content">
+      <div class="hero">
+        <div id="heroIcon" class="hero-icon">✓</div>
+        <div class="hero-copy">
+          <h1 id="title">Patreon account connected</h1>
+          <div id="desc" class="subtitle">
+            Your Patreon account has been verified successfully. You can now return to the app.
+          </div>
+        </div>
+      </div>
+
+      <div class="info-grid">
+        <div class="info-card">
+          <div class="info-label">Status</div>
+          <div id="statusValue" class="info-value">Connection completed successfully</div>
+        </div>
+
+        <div class="info-card">
+          <div class="info-label">App Action</div>
+          <div class="info-value">The app will now try to finalize your license sync.</div>
+        </div>
+
+        <div class="info-card">
+          <div class="info-label">Window</div>
+          <div class="info-value">This page will attempt to close automatically.</div>
+        </div>
+
+        <div class="info-card">
+          <div class="info-label">Fallback</div>
+          <div class="info-value">If it stays open, you can close it manually.</div>
+        </div>
+      </div>
+
+      <div class="footer-note">
+        <strong>Tip:</strong> If the app does not update immediately, return to the main window and wait a few seconds.
+      </div>
+    </div>
   </div>
 
   <script>
@@ -46,27 +297,33 @@
       const message = params.get("message");
       const subtitle = params.get("subtitle");
 
+      const badge = document.getElementById("badge");
+      const heroIcon = document.getElementById("heroIcon");
       const title = document.getElementById("title");
       const desc = document.getElementById("desc");
+      const statusValue = document.getElementById("statusValue");
 
       if (ok !== "1") {
-        title.textContent = "Connection failed";
-        title.classList.add("error");
+        badge.textContent = "FAILED";
+        badge.classList.add("error");
 
-        if (message) {
-          desc.textContent = message;
-        } else if (error) {
-          desc.textContent = "Error: " + error;
-        } else {
-          desc.textContent = "Something went wrong. Please try again.";
-        }
+        heroIcon.textContent = "!";
+        heroIcon.classList.add("error");
+
+        title.textContent = "Patreon connection failed";
+        desc.textContent = message
+          ? message
+          : error
+            ? "The connection process could not be completed. Error: " + error
+            : "Something went wrong during the connection process.";
+
+        statusValue.textContent = error ? error : "Connection failed";
       } else {
         if (subtitle) {
           desc.textContent = subtitle;
         }
       }
 
-      // Electron app'e mesaj gönder
       try {
         if (window.opener && !window.opener.closed) {
           window.opener.postMessage({
@@ -77,10 +334,9 @@
         }
       } catch (_) {}
 
-      // otomatik kapatma
       setTimeout(() => {
         try { window.close(); } catch (_) {}
-      }, 1500);
+      }, 1600);
     })();
   </script>
 </body>
