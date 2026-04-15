@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="tr">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Patreon Bağlantısı</title>
+  <title>Patreon Connection</title>
   <style>
     html, body { height: 100%; margin: 0; }
     body {
@@ -28,13 +28,14 @@
     h2 { margin: 0 0 12px; color: #4CAF50; }
     p { margin: 8px 0; opacity: .92; line-height: 1.45; }
     .muted { opacity: .7; font-size: 13px; }
+    .error { color: #ff6b6b; }
   </style>
 </head>
 <body>
   <div class="card">
-    <h2 id="title">Patreon bağlandı ✅</h2>
-    <p id="desc">Uygulamaya dönebilirsin. Bu pencere otomatik kapanmayı deneyecek.</p>
-    <p class="muted">Pencere otomatik kapanmazsa elle kapatabilirsin.</p>
+    <h2 id="title">Connection successful ✅</h2>
+    <p id="desc">You can return to the app. This window will close automatically.</p>
+    <p class="muted">If it doesn't close, you can close it manually.</p>
   </div>
 
   <script>
@@ -42,17 +43,30 @@
       const params = new URLSearchParams(window.location.search);
       const ok = params.get("ok");
       const error = params.get("error");
+      const message = params.get("message");
+      const subtitle = params.get("subtitle");
 
       const title = document.getElementById("title");
       const desc = document.getElementById("desc");
 
       if (ok !== "1") {
-        title.textContent = "Bağlantı tamamlanamadı";
-        desc.textContent = error
-          ? "Hata: " + error
-          : "İşlem tamamlanamadı. Uygulamaya dönüp tekrar deneyin.";
+        title.textContent = "Connection failed";
+        title.classList.add("error");
+
+        if (message) {
+          desc.textContent = message;
+        } else if (error) {
+          desc.textContent = "Error: " + error;
+        } else {
+          desc.textContent = "Something went wrong. Please try again.";
+        }
+      } else {
+        if (subtitle) {
+          desc.textContent = subtitle;
+        }
       }
 
+      // Electron app'e mesaj gönder
       try {
         if (window.opener && !window.opener.closed) {
           window.opener.postMessage({
@@ -63,6 +77,7 @@
         }
       } catch (_) {}
 
+      // otomatik kapatma
       setTimeout(() => {
         try { window.close(); } catch (_) {}
       }, 1500);
